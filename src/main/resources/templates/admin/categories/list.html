@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout_admin.html}">
+<head>
+    <meta charset="UTF-8"/>   <!-- Đảm bảo HTML đọc UTF-8 -->
+</head>
+
+<section class="row" layout:fragment="content">
+    <div class="col-10 offset-1 mt-4">
+        <!-- Nút đổi ngôn ngữ -->
+        <div class="text-end mb-2">
+            <a th:href="@{/admin/categories(language='en')}">English</a> |
+            <a th:href="@{/admin/categories(language='vi')}">Tiếng Việt</a>
+        </div>
+        <div class="card shadow border-0 rounded-3">
+            <!-- Header -->
+            <div class="card-header bg-gradient bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fa fa-list"></i>
+                    <span th:text="#{iostar.value.listCate}">List Category</span>
+                </h5>
+
+                <a th:href="@{/admin/categories/add}" class="btn btn-light btn-sm fw-bold shadow-sm">
+                    <i class="fa fa-plus-circle text-success"></i> <span th:text="#{iostar.value.addNew}">Add New</span>
+                </a>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body p-4">
+                <!-- Thông báo -->
+                <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="fa fa-check-circle me-2"></i> [[${message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Thanh tìm kiếm -->
+                <form th:action="@{/admin/categories/search}" method="get" class="row g-2 mb-3">
+                    <div class="col-md-8">
+                        <input type="text" name="name" class="form-control" placeholder="🔍 Search by category name...">
+                    </div>
+                    <div class="col-md-4 d-grid">
+                        <button class="btn btn-outline-primary">
+                            <i class="fa fa-search"></i> <span th:text="#{iostar.value.search}">Search</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle border">
+                        <thead class="table-primary text-center">
+                        <tr>
+                            <th scope="col" style="width: 60px;">#</th>
+                            <th scope="col">Category Name</th>
+                            <th scope="col" style="width: 220px;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category, iterStat : ${categories}">
+                            <td class="text-center fw-bold" th:text="${iterStat.count}"></td>
+                            <td>
+                                <span class="badge bg-light text-dark px-3 py-2 shadow-sm">
+                                    <i class="fa fa-tag text-secondary"></i> [[${category.name}]]
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{'/admin/categories/view/' + ${category.categoryId}}"
+                                   class="btn btn-sm btn-outline-info me-1">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a th:href="@{'/admin/categories/edit/' + ${category.categoryId}}"
+                                   class="btn btn-sm btn-outline-warning me-1">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Are you sure you want to delete this category?');">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Nếu không có dữ liệu -->
+                        <tr th:if="${#lists.isEmpty(categories)}">
+                            <td colspan="3" class="text-center text-muted fst-italic py-3">
+                                <i class="fa fa-exclamation-circle"></i> <span th:text="#{iostar.value.noCategory}">No categories found.</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer text-muted text-center small">
+                <i class="fa fa-database"></i>
+                <span th:text="#{iostar.value.total(${#lists.size(categories)})}">Total: [[${#lists.size(categories)}]] categories</span>
+            </div>
+        </div>
+    </div>
+</section>
+</html>

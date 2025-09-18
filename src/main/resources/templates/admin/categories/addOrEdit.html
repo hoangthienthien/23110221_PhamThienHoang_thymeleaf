@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout_admin.html}">
+
+<section class="row" layout:fragment="content">
+    <div class="col-6 offset-3 mt-4">
+        <form th:action="@{/admin/categories/saveOrUpdate}" method="POST" th:object="${category}">
+            <div class="card shadow-sm">
+                <!-- Header -->
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" th:text="${category.isEdit} ? 'Edit Category' : 'Add New Category'">
+                        Add New Category
+                    </h4>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body">
+                    <!-- Category ID (ẩn khi add) -->
+                    <div class="mb-3" th:if="${category.isEdit}">
+                        <label th:for="*{categoryId}" class="form-label">Category ID</label>
+                        <input type="hidden" th:field="*{isEdit}">
+                        <input type="text" readonly class="form-control-plaintext border p-2 rounded"
+                               th:field="*{categoryId}">
+                        <div th:if="${#fields.hasErrors('categoryId')}" class="form-text">
+                            <span class="text-danger">Category ID is required!</span>
+                        </div>
+                    </div>
+
+                    <!-- Category Name -->
+                    <div class="mb-3">
+                        <label th:for="*{name}" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" th:field="*{name}" placeholder="Enter category name">
+                        <div th:if="${#fields.hasErrors('name')}" class="form-text">
+                            <span class="text-danger">Category Name is required!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-save"></i> Save
+                    </button>
+                    <a th:href="@{/admin/categories}" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+</html>

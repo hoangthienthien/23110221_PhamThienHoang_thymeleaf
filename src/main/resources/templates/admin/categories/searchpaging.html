@@ -1,0 +1,145 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout_admin.html}">
+
+<section class="row" layout:fragment="content">
+    <div class="col mt-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white fw-bold">
+                <i class="fa fa-list"></i> List Category
+            </div>
+            <div class="card-body">
+
+                <!-- Hiện thông báo -->
+                <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle"></i> [[${message}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Form tìm kiếm + Add -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form th:action="@{/admin/categories/searchpaging}" method="get" class="d-flex">
+                            <input type="text" class="form-control me-2" name="name" id="name"
+                                   placeholder="Nhập từ khóa để tìm..." th:value="${name}">
+                            <button class="btn btn-outline-primary">Search</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a class="btn btn-success" th:href="@{/admin/categories/add}">
+                            <i class="fa fa-plus"></i> Add New Category
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Table hiển thị -->
+                <div th:if="${!categoryPage.hasContent()}" class="alert alert-warning text-center">
+                    <i class="fa fa-exclamation-circle"></i> No Category Found
+                </div>
+
+                <div th:if="${categoryPage.hasContent()}">
+                    <table class="table table-hover table-bordered align-middle">
+                        <thead class="table-dark text-center">
+                        <tr>
+                            <th>ID</th>
+                            <th>Category Name</th>
+                            <th width="20%">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category : ${categoryPage.content}">
+                            <td th:text="${category.categoryId}" class="text-center"></td>
+                            <td th:text="${category.name}"></td>
+                            <td class="text-center">
+                                <a th:href="@{'/admin/categories/view/' + ${category.categoryId}}"
+                                   class="btn btn-sm btn-info me-1">
+                                    <i class="fa fa-info-circle"></i>
+                                </a>
+                                <a th:href="@{'/admin/categories/edit/' + ${category.categoryId}}"
+                                   class="btn btn-sm btn-warning me-1">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a href="javascript:void(0)"
+                                   th:data-id="${category.categoryId}"
+                                   th:data-name="${category.name}"
+                                   onclick="showConfirmation(this)"
+                                   class="btn btn-sm btn-danger">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal xác nhận xóa -->
+                <div class="modal fade" id="confirmationId" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title"><i class="fa fa-exclamation-triangle"></i> Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                Bạn có chắc muốn xóa <b id="productName"></b> không?
+                            </div>
+                            <div class="modal-footer">
+                                <a id="yesOption" class="btn btn-danger">Yes, Delete</a>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: chọn size + phân trang -->
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <!-- Chọn size -->
+                    <form th:action="@{/admin/categories/searchpaging}" method="get" class="d-flex align-items-center">
+                        <label for="size" class="me-2">Page size:</label>
+                        <select class="form-select" name="size" id="size" onchange="this.form.submit()">
+                            <option th:selected="${categoryPage.size == 3}" value="3">3</option>
+                            <option th:selected="${categoryPage.size == 5}" value="5">5</option>
+                            <option th:selected="${categoryPage.size == 10}" value="10">10</option>
+                            <option th:selected="${categoryPage.size == 15}" value="15">15</option>
+                            <option th:selected="${categoryPage.size == 20}" value="20">20</option>
+                        </select>
+                        <input type="hidden" name="name" th:value="${name}"/>
+                    </form>
+
+                    <!-- Phân trang -->
+                    <nav th:if="${categoryPage.totalPages > 1}">
+                        <ul class="pagination mb-0">
+                            <li th:class="${categoryPage.first} ? 'page-item disabled' : 'page-item'">
+                                <a th:href="@{/admin/categories/searchpaging(name=${name},size=${categoryPage.size},page=1)}"
+                                   class="page-link">First</a>
+                            </li>
+
+                            <li th:each="pageNumber : ${pageNumbers}"
+                                th:class="${pageNumber == categoryPage.number + 1} ? 'page-item active' : 'page-item'">
+                                <a th:href="@{/admin/categories/searchpaging(name=${name},size=${categoryPage.size},page=${pageNumber})}"
+                                   class="page-link" th:text="${pageNumber}"></a>
+                            </li>
+
+                            <li th:class="${categoryPage.last} ? 'page-item disabled' : 'page-item'">
+                                <a th:href="@{/admin/categories/searchpaging(name=${name},size=${categoryPage.size},page=${categoryPage.totalPages})}"
+                                   class="page-link">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    function showConfirmation(element) {
+        let id = element.getAttribute("data-id");
+        let name = element.getAttribute("data-name");
+        document.getElementById("productName").innerText = name;
+        document.getElementById("yesOption").setAttribute("href", "/admin/categories/delete/" + id);
+        new bootstrap.Modal(document.getElementById("confirmationId")).show();
+    }
+</script>
+</html>

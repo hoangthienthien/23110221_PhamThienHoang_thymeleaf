@@ -1,0 +1,22 @@
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <!-- Logo / Avatar -->
+            <a class="navbar-brand d-flex align-items-center" href="/admin">
+                <img th:src="@{/images/avatar.jpg}" alt="Admin Avatar"
+                     class="rounded-circle me-2" width="40" height="40">
+                <span class="fw-bold">Admin Dashboard</span>
+            </a>
+
+            <!-- Chào admin + Logout -->
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3">
+                    Hello, <b th:text="${#httpServletRequest.remoteUser != null ? #httpServletRequest.remoteUser : 'Admin'}"></b>
+                </span>
+                <a class="btn btn-outline-light btn-sm" href="/logout">
+                    <i class="fa fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+</div>
